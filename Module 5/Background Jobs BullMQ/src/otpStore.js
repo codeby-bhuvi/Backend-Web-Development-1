@@ -1,5 +1,6 @@
 'use strict';
 
+
 // ─── YOUR FILE, implement this ───────────────────────────────────────────────
 // In-memory OTP store for email verification.
 //
@@ -24,24 +25,32 @@
 //  markVerified(email)
 //    Log that email is verified. In production: update the DB.
 //
-//  IMPORTANT, also export the Map itself as `_store`:
+//  IMPORTANT, also export the Map itself as _store:
 //    module.exports = { generateOTP, storeOTP, verifyOTP, markVerified, _store };
-//    The test suite (Test 6) reaches into `_store` directly to simulate an
+//    The test suite (Test 6) reaches into _store directly to simulate an
 //    already-expired OTP, since there's no other way to fast-forward time.
 //    Without this export, Test 6 fails even with a correct verifyOTP().
 
+
 // TODO: implement
 
+
 const crypto = require('crypto');
+
+
 
 
 const store = new Map();
 const verified = new Set();
 
 
+
+
 function generateOTP() {
   return String(crypto.randomInt(100000, 1000000)); // always 6 digits
 }
+
+
 
 
 function storeOTP(email, otp) {
@@ -53,13 +62,19 @@ function storeOTP(email, otp) {
 }
 
 
+
+
 function verifyOTP(email, code) {
   const entry = store.get(email);
+
+
 
 
   if (!entry) return { ok: false, reason: 'not_found' };                       // 401
   if (Date.now() > entry.expiresAt) return { ok: false, reason: 'expired' };   // 410
   if (entry.attempts >= 3) return { ok: false, reason: 'too_many_attempts' };  // 429
+
+
 
 
   if (entry.otp !== code) {
@@ -68,14 +83,20 @@ function verifyOTP(email, code) {
   }
 
 
+
+
   store.delete(email); // single-use
   return { ok: true };
 }
 
 
+
+
 function markVerified(email) {
   verified.add(email);
 }
+
+
 
 
 module.exports = { generateOTP, storeOTP, verifyOTP, markVerified, _store: store };
